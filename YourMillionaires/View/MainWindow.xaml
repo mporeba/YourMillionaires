@@ -1,0 +1,335 @@
+﻿<Window x:Class="YourMillionaires.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YourMillionaires.ViewModel"
+        xmlns:localx="clr-namespace:YourMillionaires.Model"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="490">
+    <Window.DataContext>
+        <local:ViewModelBase/>
+    </Window.DataContext>
+    <Window.Resources>
+        <localx:ColorToBrushConverter x:Key="colorToBrushConverter"/>
+        <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="_Border"
+                                Padding="2"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="_Border" Property="Background" Value="{Binding Converter={StaticResource colorToBrushConverter}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <TabControl Margin="5">
+            <TabItem Header="Test" 
+                     DataContext="{Binding Children[0]}"
+                     Width="150">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="0.5*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Margin="5"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Z ilu pytań ma się składać Test?"/>
+                    <TextBox Grid.Column="1"
+                             Grid.Row="0"
+                             Margin="5"
+                             FontSize="20"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding QuestionsMax}"/>
+                    <Button Grid.Column="1"
+                            Grid.Row="1"
+                            Margin="5"
+                            Content="Start"
+                            Command="{Binding StartButton}"/>
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Margin="5"
+                               VerticalAlignment="Bottom"
+                               Text="{Binding QuestionsCounter}"/>
+                    <Border Grid.Column="0"
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Margin="5"
+                            BorderThickness="1"
+                            BorderBrush="Gray"
+                            IsEnabled="{Binding IsEnabledTrueAfterStart}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      Margin="1">
+                            <TextBlock TextWrapping="Wrap" 
+                                   FontSize="15"  
+                                   Text="{Binding Question}"/>
+                        </ScrollViewer>
+                    </Border>
+                    <ListBox Grid.Column="0"
+                             Grid.Row="3"
+                             Grid.ColumnSpan="2"
+                             Margin="5"
+                             FontSize="15"
+                             IsEnabled="{Binding IsEnabledTrueAfterStart}"
+                             ItemsSource="{Binding Answers}"
+                             DisplayMemberPath="Name"
+                             SelectedItem="{Binding Path=Answer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             ItemContainerStyle="{StaticResource _ListBoxItemStyle}">
+                    </ListBox>
+                    <CheckBox Grid.Column="0"
+                              Grid.Row="1"
+                              Margin="5"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Right"
+                              Content="Auto odpowiedzi"
+                              IsEnabled="{Binding IsEnabledFalseAfterStart}"
+                              IsChecked="{Binding AutoReplies}"/>
+                    <Button Grid.Column="1"
+                            Grid.Row="4"
+                            Margin="5"
+                            Content="{Binding NextButtonName}"
+                            IsEnabled="{Binding IsEnabledTrueAfterStart}"
+                            Command="{Binding NextButton}"/>
+                    <Button Grid.Column="0"
+                            Grid.Row="4"
+                            Margin="5"
+                            Width="120"
+                            Content="Rozpocznij od nowa"
+                            HorizontalAlignment="Right"
+                            IsEnabled="{Binding IsEnabledTrueAfterStart}"
+                            Command="{Binding StartAgainTestButton}"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Baza pytań" 
+                     DataContext="{Binding Children[1]}"
+                     Width="150">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.45*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.20*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Column="0"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="3"
+                                Margin="5">
+                        <TextBlock MinHeight="25"
+                                   Margin="0,0,0,2"
+                                   Text="Pytania:"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"/>
+                        <ListBox Height="140"
+                                 ItemsSource="{Binding Questions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 DisplayMemberPath="Values"
+                                 SelectedItem="{Binding Path=Question, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="0"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="3"
+                                Margin="5">
+                        <TextBlock MinHeight="25"
+                                   Margin="0,0,0,2"
+                                   Text="Odpowiedzi:"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"/>
+                        <ListBox Height="85"
+                                 ItemsSource="{Binding Answers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 DisplayMemberPath="Name"
+                                 SelectedItem="{Binding Path=Answer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <DockPanel Grid.Column="0"
+                               Grid.Row="2"
+                               Grid.ColumnSpan="3"
+                               Margin="5,2,5,2">
+                        <Button Width="110"
+                                Content="Usuń pytanie"
+                                Margin="0,0,2,0"
+                                Command="{Binding RemoveQuestionButton}"/>
+                        <Button Width="110"
+                                Content="Usuń odpowiedź"
+                                IsEnabled="False"
+                                Margin="0,0,2,0"
+                                Command="{Binding RemoveAnswerButton}"/>
+                        <Button Width="110"
+                                Content="Zmień pytanie"
+                                Margin="0,0,2,0"
+                                Command="{Binding ChangeQuestionButton}"/>
+                        <Button Width="110"
+                                Content="Zmień odpowiedź"
+                                Margin="0,0,2,0"
+                                Command="{Binding ChangeAnswerButton}"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Dodaj pytanie"
+                DataContext="{Binding Children[2]}"                 
+                Width="150">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.25*"/>
+                        <!--<RowDefinition Height="0.25*"/>-->
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.25*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Margin="5"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Text="Pytanie:"/>
+                    <TextBox Grid.Column="1"
+                             Grid.Row="0"
+                             Grid.ColumnSpan="2"
+                             Margin="0,5,5,5"
+                             Height="30"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding Question}"/>
+                    <!--<TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               Margin="5"
+                               VerticalAlignment="Center"
+                               Text="Ile jest odpowiedzi ma pytanie?"/>
+                    <TextBox Grid.Column="2"
+                             Grid.Row="1"
+                             Margin="5"
+                             Text="{Binding AnswersCount}" 
+                             ToolTip="Wartość musi być liczbą całkowitą."/>-->
+                    <Border Grid.Column="0"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            BorderThickness="1"
+                            BorderBrush="Black">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1.25*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Column="0"
+                                    Grid.Row="0"
+                                    BorderThickness="1,1,1,2"
+                                    BorderBrush="Black">
+                                <TextBlock
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap"
+                                    Text="Czy Prawda?"
+                                    VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    Grid.Row="0"
+                                    BorderThickness="1,1,1,2"
+                                    BorderBrush="Black">
+                                <TextBlock VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           Text="Odpowiedzi"/>
+                            </Border>
+                            <CheckBox Grid.Column="0"
+                                      Grid.Row="1"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Answer1IsTrue}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1"
+                                     Margin="0,3,3,3"
+                                     Height="25"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Answer1}"/>
+                            <CheckBox Grid.Column="0"
+                                      Grid.Row="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Answer2IsTrue}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="2"
+                                     Margin="0,3,3,3"
+                                     Height="25"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Answer2}"/>
+                            <CheckBox Grid.Column="0"
+                                      Grid.Row="3"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Answer3IsTrue}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="3"
+                                     Margin="0,3,3,3"
+                                     Height="25"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Answer3}"/>
+                            <CheckBox Grid.Column="0"
+                                      Grid.Row="4"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding Answer4IsTrue}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="4"
+                                     Margin="0,3,3,3"
+                                     Height="25"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Answer4}"/>
+                        </Grid>
+                    </Border>
+                    <DockPanel Grid.Column="1"
+                                Grid.Row="3"
+                                Grid.ColumnSpan="2"
+                                Margin="0,2,0,2"
+                                HorizontalAlignment="Right">
+                        <CheckBox Content="Czyść automatycznie"
+                                  Margin="0,0,5,0"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding CleanAutomatically}"/>
+                        <Button MinHeight="25"
+                                MinWidth="100"
+                                Margin="0,0,5,0"
+                                Content="Czyść"
+                                Command="{Binding ClearAddQuestionTabButton}"/>
+                        <Button MinHeight="25"
+                                MinWidth="100"
+                                Content="Dodaj"
+                                Command="{Binding AddQuestionButton}"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
